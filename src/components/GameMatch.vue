@@ -35,43 +35,43 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import ITeam from "@/interface/ITeam";
 import IBracketNode from "../interface/IBracketNode";
-import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component
-export default class GameMatch extends Vue {
-  @Prop({ type: Object, default: {} }) bracketNode!: IBracketNode;
-  @Prop({ type: String, default: undefined }) highlightedTeamId!: string;
+const props = defineProps({
+  bracketNode: { type: Object as () => IBracketNode, default: () => ({}) },
+  highlightedTeamId: { type: String }
+});
 
-  private getPlayerClass(team: ITeam): string {
-    let clazz = "";
+const emit = defineEmits(['onMatchClick', 'onSelectedTeam', 'onDeselectedTeam']);
 
-    if (
-      this.bracketNode.match?.winner !== undefined &&
-      team.id === this.bracketNode.match?.winner
-    ) {
-      clazz = "winner";
-    }
+const getPlayerClass = (team: ITeam): string => {
+  let clazz = "";
 
-    if (this.highlightedTeamId === team.id) {
-      clazz += " highlight";
-    }
-
-    return clazz;
+  if (
+    props.bracketNode.match?.winner !== undefined &&
+    team.id === props.bracketNode.match?.winner
+  ) {
+    clazz = "winner";
   }
 
-  private onClick(): void {
-    this.$emit("onMatchClick", this.bracketNode?.match?.id);
+  if (props.highlightedTeamId === team.id) {
+    clazz += " highlight";
   }
 
-  private highlightTeam(playerId: string): void {
-    this.$emit("onSelectedTeam", playerId);
-  }
+  return clazz;
+};
 
-  private unhighlightTeam(): void {
-    this.$emit("onDeselectedTeam");
-  }
-}
+const onClick = (): void => {
+  emit('onMatchClick', props.bracketNode?.match?.id);
+};
+
+const highlightTeam = (playerId: string): void => {
+  emit('onSelectedTeam', playerId);
+};
+
+const unhighlightTeam = (): void => {
+  emit('onDeselectedTeam');
+};
 </script>

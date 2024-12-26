@@ -10,8 +10,7 @@
         @onSelectedTeam="highlightTeam"
         @onDeselectedTeam="unhighlightTeam"
         @onMatchClick="onMatchClick"
-      >
-      </FeedIn>
+      />
     </div>
     <div v-else :class="getBracketNodeClass(bracketNode)">
       <GameMatch
@@ -20,8 +19,7 @@
         @onSelectedTeam="highlightTeam"
         @onDeselectedTeam="unhighlightTeam"
         @onMatchClick="onMatchClick"
-      >
-      </GameMatch>
+      />
     </div>
 
     <div
@@ -35,8 +33,7 @@
           @onSelectedTeam="highlightTeam"
           @onDeselectedTeam="unhighlightTeam"
           @onMatchClick="onMatchClick"
-        >
-        </BracketNode>
+        />
       </div>
       <div class="vt-item-child" v-if="bracketNode.children[1]">
         <BracketNode
@@ -45,60 +42,53 @@
           @onSelectedTeam="highlightTeam"
           @onDeselectedTeam="unhighlightTeam"
           @onMatchClick="onMatchClick"
-        >
-        </BracketNode>
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue';
 import FeedIn from "./FeedIn.vue";
 import GameMatch from "./GameMatch.vue";
 import IBracketNode from "../interface/IBracketNode";
 
-import { Component, Prop, Vue } from "vue-property-decorator";
+const props = defineProps({
+  bracketNode: { type: Object as () => IBracketNode, default: () => ({}) },
+  highlightedTeamId: { type: String }
+});
 
-@Component({
-  name: "BracketNode",
-  components: {
-    GameMatch,
-    FeedIn,
-  },
-})
-export default class BracketNode extends Vue {
-  @Prop({ type: Object, default: {} }) bracketNode!: IBracketNode;
-  @Prop({ type: String, default: undefined }) highlightedTeamId!: string;
+const emit = defineEmits(['onMatchClick', 'onSelectedTeam', 'onDeselectedTeam']);
 
-  get matchArePresent(): boolean {
-    return this.bracketNode.match !== undefined;
+const matchArePresent = computed(() => props.bracketNode.match !== undefined);
+
+const getBracketNodeClass = (bracketNode: IBracketNode): string => {
+  if (bracketNode.children[0] || bracketNode.children[1]) {
+    return "vt-item-parent";
   }
 
-  private getBracketNodeClass(bracketNode: IBracketNode): string {
-    if (bracketNode.children[0] || bracketNode.children[1]) {
-      return "vt-item-parent";
-    }
-
-    if (bracketNode.hasParent) {
-      return "vt-item-child";
-    }
-
-    return "";
+  if (bracketNode.hasParent) {
+    return "vt-item-child";
   }
 
-  private onMatchClick(matchId: string | number): void {
-    this.$emit("onMatchClick", matchId);
-  }
+  return "";
+};
 
-  private highlightTeam(playerId: string | number): void {
-    this.$emit("onSelectedTeam", playerId);
-  }
+const onMatchClick = (matchId: string | number): void => {
+  emit('onMatchClick', matchId);
+};
 
-  private unhighlightTeam(): void {
-    this.$emit("onDeselectedTeam");
-  }
-}
+const highlightTeam = (playerId: string | number): void => {
+  emit('onSelectedTeam', playerId);
+};
+
+const unhighlightTeam = (): void => {
+  emit('onDeselectedTeam');
+};
 </script>
+
+
 
 <style>
 .vt-item {

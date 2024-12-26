@@ -6,24 +6,16 @@
   />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+//@ts-nocheck
+import { ref } from 'vue';
 import IRound from "./interface/IRound";
-import { Component, Vue } from "vue-property-decorator";
-
 import TournamentBracket from "./TournamentBracket.vue";
-
 import bracketData from "./mockData/singleElimination8WithFeedIn.json";
 
-@Component({
-  components: {
-    TournamentBracket,
-  },
-})
-export default class App extends Vue {
-  rounds: IRound[] = bracketData;
+const rounds = ref<IRound[]>(bracketData);
 
-  private onMatchClick(matchId: string | number): void {
-    alert(`click: ${matchId}`);
-  }
-}
+const onMatchClick = (matchId: string | number): void => {
+  alert(`click: ${matchId}`);
+};
 </script>

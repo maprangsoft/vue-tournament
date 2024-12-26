@@ -6,74 +6,62 @@
       @onSelectedTeam="highlightTeam"
       @onDeselectedTeam="unhighlightTeam"
       @onMatchClick="onMatchClick"
-    >
-    </BracketNode>
+    />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
+<script setup lang="ts">
+//@ts-nocheck
+import { ref, computed } from 'vue';
 import IRound from "./interface/IRound";
 import IBracketNode from "./interface/IBracketNode";
 import BracketNode from "./components/BracketNode.vue";
 import { courthiveAdaptor } from "./adaptor/courthiveAdaptor";
 import { transform as transformBracket } from "./recursiveBracket";
 
-@Component({
-  components: {
-    BracketNode,
-  },
-})
-export default class TournamentBracket extends Vue {
-  @Prop({ type: Array, default: [] }) private rounds!: IRound[] | any;
-  @Prop({ type: String, default: "default" }) private format!:
-    | "default"
-    | "courthive";
-  @Prop({ type: String, default: "#ffffff" }) private textColor!: string;
-  @Prop({ type: String, default: "#9d999d" }) private titleColor!: string;
-  @Prop({ type: String, default: "#59595e" })
-  private teamBackgroundColor!: string;
-  @Prop({ type: String, default: "#222222" })
-  private highlightTeamBackgroundColor!: string;
-  @Prop({ type: String, default: "#787a7f" })
-  private scoreBackgroundColor!: string;
-  @Prop({ type: String, default: "#ee7b3c" })
-  private winnerScoreBackgroundColor!: string;
+const props = defineProps({
+  rounds: { type: Array as () => IRound[] | any, default: () => [] },
+  format: { type: String, default: "default" },
+  textColor: { type: String, default: "#ffffff" },
+  titleColor: { type: String, default: "#9d999d" },
+  teamBackgroundColor: { type: String, default: "#59595e" },
+  highlightTeamBackgroundColor: { type: String, default: "#222222" },
+  scoreBackgroundColor: { type: String, default: "#787a7f" },
+  winnerScoreBackgroundColor: { type: String, default: "#ee7b3c" }
+});
 
-  private highlightedTeamId: string | undefined = "";
+const emit = defineEmits(['onMatchClick']);
 
-  private onMatchClick(matchId: string | number): void {
-    this.$emit("onMatchClick", matchId);
+const highlightedTeamId = ref<string | undefined>("");
+
+const recursiveBracket = computed(() => {
+  let copyRound = props.rounds;
+  if (props.format === "courthive") {
+    copyRound = courthiveAdaptor(props.rounds);
   }
+  return transformBracket(copyRound);
+});
 
-  private highlightTeam(teamId: string): void {
-    this.highlightedTeamId = teamId;
-  }
+const cssVars = computed(() => ({
+  "--text-color": props.textColor,
+  "--title-color": props.titleColor,
+  "--team-background-color": props.teamBackgroundColor,
+  "--highlight-team-background-color": props.highlightTeamBackgroundColor,
+  "--score-background-color": props.scoreBackgroundColor,
+  "--winner-score-background-color": props.winnerScoreBackgroundColor,
+}));
 
-  private unhighlightTeam(): void {
-    this.highlightedTeamId = undefined;
-  }
+const onMatchClick = (matchId: string | number): void => {
+  emit('onMatchClick', matchId);
+};
 
-  get recursiveBracket(): IBracketNode | undefined {
-    let copyRound = this.rounds;
-    if (this.format === "courthive") {
-      copyRound = courthiveAdaptor(this.rounds);
-    }
-    return transformBracket(copyRound);
-  }
+const highlightTeam = (teamId: string): void => {
+  highlightedTeamId.value = teamId;
+};
 
-  get cssVars(): { [key: string]: string } {
-    return {
-      "--text-color": this.textColor,
-      "--title-color": this.titleColor,
-      "--team-background-color": this.teamBackgroundColor,
-      "--highlight-team-background-color": this.highlightTeamBackgroundColor,
-      "--score-background-color": this.scoreBackgroundColor,
-      "--winner-score-background-color": this.winnerScoreBackgroundColor,
-    };
-  }
-}
+const unhighlightTeam = (): void => {
+  highlightedTeamId.value = undefined;
+};
 </script>
 
 <style>

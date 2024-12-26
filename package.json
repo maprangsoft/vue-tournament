@@ -1,49 +1,37 @@
 {
-  "name": "vue-tournament",
-  "version": "1.1.2",
+  "name": "vue-tournament-bracket",
+  "version": "3.0.0",
   "license": "MIT",
-  "repository": "https://github.com/RuiChen0101/vue-tournament.git",
-  "author": "RuiChen <ruichen0101@gmail.com>",
-  "description": "Tournament brackets generator using Vue.",
-  "files": [
-    "dist/*"
-  ],
-  "main": "dist/vue-tournament.common.js",
+  "repository": "https://github.com/kamilwylegala/vue-tournament-bracket",
+  "author": "Kamil Wylegała <kamil.wylegala@gmail.com>",
+  "description": "Vue component for rendering single elemination tournament brackets.",
+  "main": "dist/vue-tournament-bracket.common.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "deploy": "npm run build && npm publish",
-    "build": "vue-cli-service build --target lib --name vue-tournament ./src/TournamentBracket.vue",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "serve": "vue-cli-service serve src/main.ts",
+    "build": "vue-cli-service build --target lib --name vue-tournament-bracket ./src/TournamentBracket.vue",
+    "lint": "vue-cli-service lint",
+    "eslint": "eslint src test --ignore-pattern *bundle* --ext js,vue",
+    "test": "mocha --require should test/**/*.test.js"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
-    "tods-competition-factory": "^0.26.1",
-    "vue": "^2.6.11",
-    "vue-class-component": "^7.2.3",
-    "vue-property-decorator": "^9.1.2"
+    "vue": "^3.2.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.11",
-    "@types/mocha": "^5.2.4",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "^3.1.1",
-    "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-unit-mocha": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
-    "@vue/eslint-config-typescript": "^7.0.0",
-    "@vue/test-utils": "^1.0.3",
-    "chai": "^4.1.2",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "typescript": "~4.1.5",
-    "vue-template-compiler": "^2.6.11"
+    "@vue/babel-preset-app": "^5.0.4",
+    "@vue/cli-plugin-babel": "^5.0.4",
+    "@vue/cli-service": "^5.0.4",
+    "mocha": "^7.1.1",
+    "prettier": "^2.6.1",
+    "should": "^13.2.3"
   },
-  "keywords": [
-    "vue",
-    "tournament brackets",
-    "tournament"
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
   ]
 }

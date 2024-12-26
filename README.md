@@ -19,7 +19,7 @@ Example:
   <TournamentBracket :rounds="rounds" @onMatchClick="onMatchClick" />
 </template>
 
-<script lang="ts">
+<script>
 import IRound from "./interface/IRound";
 
 import { Component, Vue } from "vue-property-decorator";
